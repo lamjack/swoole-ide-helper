@@ -6,6 +6,8 @@ namespace Swoole;
  *
  * Author: wudi <wudi23@baidu.com>
  * Date: 2016/02/17
+ * @property string $host 服务器地址
+ * @property int    $port 服务器端口
  */
 class Server
 {
@@ -116,6 +118,11 @@ class Server
      *  * onWorkerError
      *  * onManagerStart
      *  * onManagerStop
+     *  WebSocket
+     *  * onOpen
+     *  * onHandshake
+     *  * onMessage
+     *
      *
      *     $http_server->on('request', function(swoole_http_request $request, swoole_http_response $response) {
      *         $response->end("<h1>hello swoole</h1>");
@@ -484,7 +491,7 @@ class Server
      * @param string $host
      * @param int $port
      * @param int $type
-     * 
+     *
      * @return \swoole_server_port|bool 如果成功，1.8.0以上版本返回swoole_server_port，以下返回TRUE；如果失败返回FALSE
      */
     public function addlistener($host, $port, $type = SWOOLE_SOCK_TCP)
@@ -554,7 +561,7 @@ class Server
      *
      * 子进程会托管到Manager进程，如果发生致命错误，manager进程会重新创建一个
      *
-     * @param swoole_process $process
+     * @param swoole_process|Process $process
      */
     public function addProcess(swoole_process $process)
     {
@@ -713,5 +720,20 @@ class Server
     function getClientInfo($fd)
     {
 
+    }
+    
+    /**
+     * 并发执行多个Task
+     *
+     * 执行成功返回一个结果数据，数组的key与传入的$tasks一致
+     * 某个任务执行超时不会影响其他任务，返回的结果数据中将不包含超时的任务
+     *
+     * @param array $tasks 必须为数字索引数组，不支持关联索引数组，底层会遍历$tasks将任务逐个投递到Task进程
+     * @param double $timeout  为浮点型，单位为秒
+     * @return array
+     */
+    function taskWaitMulti(array $tasks, $timeout)
+    {
+    
     }
 }
